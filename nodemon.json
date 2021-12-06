@@ -1,0 +1,11 @@
+{
+  "restartable": "rs",
+  "ignore": [".git", "node_modules/", "build/", "coverage/"],
+  "watch": ["src/"],
+  "exec": "node --experimental-modules --es-module-specifier-resolution=node --loader ts-node/esm src/index.ts",
+  "env": {
+    "NODE_ENV": "development",
+    "NODE_NO_WARNINGS": 1
+  },
+  "ext": "json,ts"
+}
