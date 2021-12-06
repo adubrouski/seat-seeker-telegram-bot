@@ -1,0 +1,21 @@
+{
+  "name": "seat-seeker-telegram-bot",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "index.ts",
+  "scripts": {
+    "start": "nodemon --config nodemon.json",
+    "build": "tsc --build"
+  },
+  "author": "Anton Dubrouski<adubrouski145@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "@types/node": "16.11.11",
+    "nodemon": "2.0.15",
+    "prettier": "^2.5.1",
+    "ts-node": "10.4.0",
+    "typescript": "4.5.2"
+  },
+  "dependencies": {}
+}
