@@ -34,17 +34,22 @@ const composePointOfDeparture = (
   const departureSection = mainInfoWrapper
     .children('div:first-child')
     .children('div:first-child');
+  const dateInnerText = departureSection
+    .children('div:first-child')
+    .children('div:nth-child(2)')
+    .text(); // example: '8 Dec, We'
+  const datePart = dateInnerText.split(',')[0]; // example: '8 Dec'
+
+  const dateObject = new Date(Date.parse(datePart));
+  dateObject.setFullYear(new Date().getFullYear());
 
   return {
     city: departureSection.children('div:nth-child(2)').text(),
     station: departureSection.children('div:last-child').first().text(),
-    date: departureSection
-      .children('div:first-child')
-      .children('div:first-child')
-      .text(),
+    date: dateObject.toISOString(),
     time: departureSection
       .children('div:first-child')
-      .children('div:nth-child(2)')
+      .children('div:first-child')
       .text(),
   };
 };
