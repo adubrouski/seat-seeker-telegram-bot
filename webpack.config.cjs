@@ -12,9 +12,17 @@ module.exports = (env, options) => {
         file;
       return acc;
     }, {});
+  const libFilesPaths = glob
+    .sync('./lib/**/*.ts', { ignore: './src/**/*.test.ts' })
+    .reduce((acc, file) => {
+      acc[file.replace(/^\.\/src\/(.*?)\.ts$/, (_, filename) => filename)] =
+        file;
+      return acc;
+    }, {});
+  const files = { ...srcFilesPaths, ...libFilesPaths };
 
   return {
-    entry: isProductionMode ? './src/index.ts' : srcFilesPaths,
+    entry: isProductionMode ? './src/index.ts' : files,
     output: {
       path: path.resolve(__dirname, 'dist'),
       filename: isProductionMode ? '[name].bundle.cjs' : '[name].cjs',

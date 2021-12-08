@@ -1,10 +1,10 @@
 import { getHtmlContent } from './queries/html.query';
-import { parseHtmlToRoutesList } from './helpers/html.helper';
+import { htmlParser } from '../lib/html-parser';
 
 (async () => {
   try {
     const html = await getHtmlContent();
-    const routes = parseHtmlToRoutesList(html);
+    const routes = htmlParser(html).parse();
     console.log(routes);
   } catch (error) {
     console.log(error);
