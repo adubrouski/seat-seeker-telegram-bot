@@ -4,18 +4,20 @@ const glob = require('glob');
 const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = (env, options) => {
-  const isDev = options.mode === 'development';
+  const isProductionMode = options.mode === 'production';
+  const srcFilesPaths = glob
+    .sync('./src/**/*.ts', { ignore: './src/**/*.test.ts' })
+    .reduce((acc, file) => {
+      acc[file.replace(/^\.\/src\/(.*?)\.ts$/, (_, filename) => filename)] =
+        file;
+      return acc;
+    }, {});
 
   return {
-    entry: glob
-      .sync('./src/**/*.ts', { ignore: './src/**/*.test.js' })
-      .reduce((acc, file) => {
-        acc[file.replace(/^\.\/src\/(.*?)\.ts$/, (_, filename) => filename)] =
-          file;
-        return acc;
-      }, {}),
+    entry: isProductionMode ? './src/index.ts' : srcFilesPaths,
     output: {
       path: path.resolve(__dirname, 'dist'),
+      filename: isProductionMode ? '[name].bundle.cjs' : '[name].cjs',
     },
     mode: options.mode,
     target: 'node',
@@ -23,7 +25,7 @@ module.exports = (env, options) => {
       extensions: ['.webpack.js', '.web.js', '.ts', '.js'],
     },
     optimization: {
-      minimize: !isDev,
+      minimize: isProductionMode,
       minimizer: [
         new TerserPlugin({
           extractComments: false,
