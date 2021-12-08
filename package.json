@@ -1,21 +1,26 @@
 {
   "name": "seat-seeker-telegram-bot",
   "version": "0.1.0",
-  "type": "module",
   "main": "index.ts",
   "scripts": {
     "start:dev": "nodemon --config nodemon.json",
-    "start:prod": "webpack --mode production && node dist/bundle.js",
+    "start:prod": "tsc --build && node dist/index.js",
     "build": "webpack --mode production"
   },
   "author": "Anton Dubrouski<adubrouski145@gmail.com>",
   "license": "MIT",
   "private": true,
   "devDependencies": {
+    "@babel/core": "7.16.0",
+    "@babel/plugin-transform-modules-commonjs": "7.16.0",
     "@types/node": "16.11.11",
+    "babel-loader": "8.2.3",
+    "babel-preset-es2015": "6.24.1",
     "clean-webpack-plugin": "4.0.0",
+    "glob": "^7.2.0",
     "nodemon": "2.0.15",
     "prettier": "2.5.1",
+    "terser-webpack-plugin": "^5.2.5",
     "ts-loader": "9.2.6",
     "ts-node": "10.4.0",
     "typescript": "4.5.2",

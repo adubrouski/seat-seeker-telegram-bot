@@ -12,7 +12,7 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
     "module": "esnext",
-    "outDir": "build",
+    "outDir": "dist",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": false,

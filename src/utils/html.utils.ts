@@ -4,7 +4,7 @@ import {
   PointOfDestination,
   Route,
   Seats,
-} from '../models/Route.model';
+} from '../models/route.model';
 
 export const getRoutesListFromContainer = () => {
   const routes: Route[] = [];
