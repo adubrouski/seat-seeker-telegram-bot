@@ -1,20 +1,49 @@
+import { Months } from './enum/months.enum';
+
 export class DateParser {
-  constructor(private entryDate: string) {
-    // entry date example: 8 Dec, Mo
-  }
+  private readonly entryDate: Date;
 
-  public parse() {
-    const datePart = this.entryDate.split(',')[0];
-
-    const dateObject = new Date(Date.parse(datePart));
-    dateObject.setFullYear(new Date().getFullYear());
-    const year = this.getValidYear(dateObject.toISOString());
-  }
-
-  private getValidYear(date: string) {
-    return (
-      new Date(new Date(date).toDateString()) <
-      new Date(new Date(new Date().getFullYear() + 1, 1, 1).toDateString())
+  constructor(entryDate: string, entryTime: string) {
+    const timePattern = new RegExp('^([01][0-9]|2[0-3]):([0-5][0-9])$');
+    const datePattern = new RegExp(
+      '^([1-9]|[12][0-9]|3[01]) [A-Z][a-z]{2}, [A-Z][a-z]$',
     );
+
+    if (!datePattern.test(entryDate)) {
+      throw Error('Date format is invalid, example: 8 Dec, Mo');
+    }
+
+    if (!timePattern.test(entryTime)) {
+      throw Error('Time format is invalid, example: 23:00');
+    }
+
+    const datePart = entryDate.split(',')[0];
+    const date = new Date(Date.parse(`${datePart} ${entryTime}`));
+    const year = DateParser.getValidYear(date);
+    date.setFullYear(year);
+    this.entryDate = date;
+  }
+
+  public parseToISO() {
+    const dateWithoutTimezoneOffset = DateParser.getDateWithoutTimezoneOffset(
+      this.entryDate,
+    );
+
+    return dateWithoutTimezoneOffset.toISOString();
+  }
+
+  private static getValidYear(date: Date) {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const isNextYearDate =
+      currentDate.getMonth() !== Months.January &&
+      date.getMonth() === Months.January;
+
+    return isNextYearDate ? currentYear + 1 : currentYear;
+  }
+
+  private static getDateWithoutTimezoneOffset(date: Date) {
+    const userTimezoneOffset = date.getTimezoneOffset() * 60000;
+    return new Date(date.getTime() - userTimezoneOffset);
   }
 }

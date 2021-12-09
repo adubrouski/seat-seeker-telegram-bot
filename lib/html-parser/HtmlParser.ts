@@ -5,9 +5,11 @@ import {
   Route,
   Seats,
 } from '../../src/models/route.model';
+import { dateParser } from '../date-parser';
 
 export class HtmlParser {
   private list: Route[];
+
   constructor(private htmlDocument: string) {
     this.list = [];
   }
@@ -64,20 +66,19 @@ export class HtmlParser {
     const dateInnerText = departureSection
       .children('div:first-child')
       .children('div:nth-child(2)')
-      .text(); // example: '8 Dec, We'
-    const datePart = dateInnerText.split(',')[0]; // example: '8 Dec'
+      .text();
+    const timeInnerText = departureSection
+      .children('div:first-child')
+      .children('div:first-child')
+      .text();
 
-    const dateObject = new Date(Date.parse(datePart));
-    dateObject.setFullYear(new Date().getFullYear());
+    const ISODate = dateParser(dateInnerText, timeInnerText).parseToISO();
 
     return {
       city: departureSection.children('div:nth-child(2)').text(),
       station: departureSection.children('div:last-child').first().text(),
-      date: dateObject.toISOString(),
-      time: departureSection
-        .children('div:first-child')
-        .children('div:first-child')
-        .text(),
+      date: ISODate,
+      time: timeInnerText,
     };
   }
 

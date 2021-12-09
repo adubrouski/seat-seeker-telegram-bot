@@ -1,4 +1,4 @@
-const path = require('path');
+const path = require('./src/path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const glob = require('glob');
 const TerserPlugin = require('terser-webpack-plugin');
