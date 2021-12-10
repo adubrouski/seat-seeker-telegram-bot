@@ -1,7 +1,8 @@
 import { Months } from './enum/months.enum';
+import dayjs, { Dayjs } from 'dayjs';
 
 export class DateParser {
-  private readonly entryDate: Date;
+  private readonly entryDate: Dayjs;
 
   constructor(entryDate: string, entryTime: string) {
     const timePattern = new RegExp('^([01][0-9]|2[0-3]):([0-5][0-9])$');
@@ -19,17 +20,14 @@ export class DateParser {
 
     const datePart = entryDate.split(',')[0];
     const date = new Date(Date.parse(`${datePart} ${entryTime}`));
+
     const year = DateParser.getValidYear(date);
     date.setFullYear(year);
-    this.entryDate = date;
+    this.entryDate = dayjs(date).utcOffset(0, true);
   }
 
-  public parseToISO() {
-    const dateWithoutTimezoneOffset = DateParser.getDateWithoutTimezoneOffset(
-      this.entryDate,
-    );
-
-    return dateWithoutTimezoneOffset.toISOString();
+  public getDateObject() {
+    return this.entryDate;
   }
 
   private static getValidYear(date: Date) {
@@ -40,10 +38,5 @@ export class DateParser {
       date.getMonth() === Months.January;
 
     return isNextYearDate ? currentYear + 1 : currentYear;
-  }
-
-  private static getDateWithoutTimezoneOffset(date: Date) {
-    const userTimezoneOffset = date.getTimezoneOffset() * 60000;
-    return new Date(date.getTime() - userTimezoneOffset);
   }
 }

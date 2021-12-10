@@ -1,8 +1,9 @@
+import { Dayjs } from 'dayjs';
+
 export interface PointOfDeparture {
   city: string;
   station: string;
-  date: string;
-  time: string;
+  date: Dayjs;
 }
 
 export interface PointOfDestination {
