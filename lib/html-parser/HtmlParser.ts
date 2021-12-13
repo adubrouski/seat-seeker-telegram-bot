@@ -72,12 +72,10 @@ export class HtmlParser {
       .children('div:first-child')
       .text();
 
-    const date = dateParser(dateInnerText, timeInnerText).getDateObject();
-
     return {
       city: departureSection.children('div:nth-child(2)').text(),
       station: departureSection.children('div:last-child').first().text(),
-      date: date,
+      date: dateParser(dateInnerText, timeInnerText).getDateObject(),
     };
   }
 

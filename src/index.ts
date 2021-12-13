@@ -6,6 +6,8 @@ import appConfig from '../appconfig.json';
 import { Telegraf, Markup } from 'telegraf';
 import { InlineKeyboardButton } from 'telegraf/src/core/types/typegram';
 import { Hiding } from './models/telegraf.model';
+import { getHtmlContent } from './queries/html.query';
+import { htmlParser } from '../lib/html-parser';
 
 dayjs.extend(localizedFormat);
 dayjs.locale('ru');
@@ -20,50 +22,73 @@ bot.start(async (ctx) => {
     test.push(ggg);
   }
 
-  const keyboardMarkup = test.reduce((acc, item, index, array) => {
-    try {
+  const keyboardMarkup = test.reduce(
+    (acc: Hiding<InlineKeyboardButton>[][], item, index, array) => {
       if (index % 2) {
         acc.push([
-          Markup.button.callback(
-            item.format('D MMMM (dd)'),
-            item.toISOString(),
-          ),
-          Markup.button.callback(
-            array[index - 1].format('D MMMM (dd)'),
-            array[index - 1].toISOString(),
-          ),
+          {
+            text: array[index - 1].format('D MMMM (dd)'),
+            callback_data: `[DATE]${array[index - 1].toISOString()}`,
+          },
+          {
+            text: item.format('D MMMM (dd)'),
+            callback_data: `[DATE]${item.toISOString()}`,
+          },
         ]);
       }
 
       return acc;
-    } catch (error) {
-      console.log(error);
-    }
-  }, [] as any) as Hiding<InlineKeyboardButton>[][];
+    },
+    [],
+  );
 
   ctx.reply('random example', Markup.inlineKeyboard(keyboardMarkup));
 });
 
 bot.action(
-  /\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/,
-  (ctx) => {
-    ctx.reply('ABOBA');
+  /\[DATE]\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/,
+  async (ctx) => {
+    const rr = await getHtmlContent();
+    const test = htmlParser(rr).parse();
+
+    const keyboardMarkup = test.reduce(
+      (acc: Hiding<InlineKeyboardButton>[][], item, index, array) => {
+        if (index % 2) {
+          acc.push([
+            {
+              text: array[index - 1].pointOfDeparture.date.format('HH:mm'),
+              callback_data: `[TIME]${array[
+                index - 1
+              ].pointOfDeparture.date.toISOString()}`,
+            },
+            {
+              text: item.pointOfDeparture.date.format('HH:mm'),
+              callback_data: `[TIME]${item.pointOfDeparture.date.toISOString()}`,
+            },
+          ]);
+        }
+
+        return acc;
+      },
+      [],
+    );
+
+    ctx.reply('random example', Markup.inlineKeyboard(keyboardMarkup));
   },
 );
 
-bot.action('PREV_PAGE', (ctx) => {
-  return ctx.editMessageReplyMarkup({
-    inline_keyboard: [
-      [Markup.button.callback('Coke', 'Coke')],
-      [Markup.button.callback('Coke3333', 'Coke')],
-      [Markup.button.callback('Coke', 'Coke')],
-      [
-        Markup.button.callback('\u{2B05}', 'PREV_PAGE'),
-        Markup.button.callback('\u{27A1}', 'NEXT_PAGE'),
-      ],
-    ],
-  });
-});
+bot.action(
+  /\[TIME]\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/,
+  (ctx) => {
+    //@ts-ignore
+    const test = ctx.update.callback_query.data;
+    if (test) {
+      ctx.reply(test);
+    }
+
+    ctx.answerCbQuery('');
+  },
+);
 
 bot.launch();
 

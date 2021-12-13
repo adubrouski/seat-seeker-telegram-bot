@@ -1,5 +1,8 @@
 import { Months } from './enum/months.enum';
 import dayjs, { Dayjs } from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
 
 export class DateParser {
   private readonly entryDate: Dayjs;
@@ -21,8 +24,7 @@ export class DateParser {
     const datePart = entryDate.split(',')[0];
     const date = new Date(Date.parse(`${datePart} ${entryTime}`));
 
-    const year = DateParser.getValidYear(date);
-    date.setFullYear(year);
+    date.setFullYear(DateParser.getValidYear(date));
     this.entryDate = dayjs(date).utcOffset(0, true);
   }
 
