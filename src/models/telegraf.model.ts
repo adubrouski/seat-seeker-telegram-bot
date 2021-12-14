@@ -1,1 +1,4 @@
-export type Hiding<B> = B & { hide?: boolean };
+export interface InlineKeyboardButton {
+  text: string;
+  callback_data: string;
+}
