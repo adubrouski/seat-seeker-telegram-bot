@@ -2,16 +2,14 @@ export class QueryStringParser<T> {
   constructor(private readonly url: string) {}
 
   parse(): T {
-    const queryString = this.getQueryString();
-    return queryString.split('&').reduce((acc, item) => {
-      const [key, value] = item.split('=');
-      acc[key] = value;
+    const entries = this.getQueryString()
+      .split('&')
+      .map((item) => item.split('='));
 
-      return acc;
-    }, {} as any);
+    return Object.fromEntries(entries);
   }
 
-  getQueryString() {
+  private getQueryString() {
     return this.url.split('?')[1];
   }
 }

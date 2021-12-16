@@ -6,7 +6,8 @@
     "start:dev": "nodemon --config nodemon.json",
     "start:prod": "webpack --mode production && node dist/main.bundle.cjs",
     "build:dev": "webpack --mode development",
-    "build:prod": "webpack --mode production"
+    "build:prod": "webpack --mode production",
+    "start": "nodemon --config nodemon.json"
   },
   "author": "Anton Dubrouski<adubrouski145@gmail.com>",
   "license": "MIT",
