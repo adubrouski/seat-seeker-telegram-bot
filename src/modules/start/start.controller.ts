@@ -7,8 +7,8 @@ export class StartController {
       reply_markup: {
         inline_keyboard: [
           [
-            { text: 'city1', callback_data: '/city' },
-            { text: 'city2', callback_data: '/city' },
+            { text: 'city1', callback_data: '/city/1' },
+            { text: 'city2', callback_data: '/city/1' },
           ],
         ],
       },
