@@ -1,8 +1,8 @@
-import { bot } from '../../index';
 import { Message } from 'node-telegram-bot-api';
+import { MainController } from '../main.controller';
 
-export class StartController {
-  static getCitiesKeyboard(msg: Message) {
+export class StartController extends MainController {
+  getCitiesKeyboard(msg: Message) {
     const opts = {
       reply_markup: {
         inline_keyboard: [
@@ -13,7 +13,6 @@ export class StartController {
         ],
       },
     };
-
-    bot.sendMessage(msg.chat.id, "I'm a test robot", opts);
+    this.bot.sendMessage(msg.chat.id, "I'm a test robot", opts);
   }
 }

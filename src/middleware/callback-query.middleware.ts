@@ -12,7 +12,7 @@ export const matchQueryController = async (query: CallbackQuery) => {
 
   if (/\/city\/\d+/.test(query.data)) {
     const cityId = query.data.split('/')[1];
-    await CityController.getDatesKeyboard(chatId, queryId, cityId);
+    await new CityController().getDatesKeyboard(chatId, queryId, cityId);
   }
 
   if (
@@ -20,6 +20,6 @@ export const matchQueryController = async (query: CallbackQuery) => {
       query.data,
     )
   ) {
-    await DateController.getTimesKeyboard(chatId, query.data);
+    await new DateController().getTimesKeyboard(chatId, query.data);
   }
 };

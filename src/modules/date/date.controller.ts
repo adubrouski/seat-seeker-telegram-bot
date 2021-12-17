@@ -1,10 +1,10 @@
-import { bot } from '../../index';
 import { DateService } from './date.service';
 import { SendMessageOptionsBuilder } from '../../builders/SendMessageOptionsBuilder';
 import { queryStringParser } from '../../../lib/query-string-parser';
+import { MainController } from '../main.controller';
 
-export class DateController {
-  static async getTimesKeyboard(chatId: number, url: string) {
+export class DateController extends MainController {
+  async getTimesKeyboard(chatId: number, url: string) {
     try {
       const { skip, take } =
         queryStringParser<{ skip: string; take: string }>(url).parse();
@@ -17,7 +17,7 @@ export class DateController {
         .setReplyMarkup({ inline_keyboard: timesKeyboard })
         .build();
 
-      bot.sendMessage(chatId, '1233', options);
+      this.bot.sendMessage(chatId, '1233', options);
     } catch (error) {
       console.log(error);
     }
