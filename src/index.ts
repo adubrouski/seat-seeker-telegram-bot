@@ -13,3 +13,5 @@ export const bot = new TelegramBot(appConfig['API-KEY'], { polling: true });
 
 bot.onText(/\/start/, StartController.getCitiesKeyboard);
 bot.on('callback_query', matchQueryController);
+
+console.log('start');

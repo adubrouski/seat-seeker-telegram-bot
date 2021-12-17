@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "es5",
     "lib": ["ES6"],
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -11,8 +11,10 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
+    "inlineSources": true,
+    "sourceMap": true,
     "module": "esnext",
-    "outDir": "dist",
+    "outDir": "build",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": false,
