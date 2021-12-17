@@ -5,13 +5,21 @@ import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import { StartController } from './modules/start/start.controller';
 import { matchQueryController } from './middleware/callback-query.middleware';
+import { BotBuilder } from './builders/BotBuilder';
 
 dayjs.extend(localizedFormat);
 dayjs.locale('ru');
 
-export const bot = new TelegramBot(appConfig['API-KEY'], { polling: true });
+(async () => {
+  try {
+    const bot = await new BotBuilder()
+      .setApiToken(appConfig['API-KEY'])
+      .setConfig({ polling: true })
+      .build();
 
-bot.onText(/\/start/, StartController.getCitiesKeyboard);
-bot.on('callback_query', matchQueryController);
-
-console.log('start');
+    bot.onText(/\/start/, new StartController().getCitiesKeyboard);
+    bot.on('callback_query', matchQueryController);
+  } catch (error) {
+    process.exit(1);
+  }
+})();
