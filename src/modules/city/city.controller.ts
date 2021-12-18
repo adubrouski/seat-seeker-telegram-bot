@@ -1,14 +1,14 @@
-import { bot } from '../../index';
 import { CityService } from './city.service';
+import { SendMessageOptionsBuilder } from '../../builders/SendMessageOptionsBuilder';
+import { MainController } from '../main.controller';
 
-export class CityController {
-  static getDatesKeyboard(chatId: number, cityId: string) {
-    const opts = {
-      reply_markup: {
-        inline_keyboard: CityService.getDatesKeyboard(),
-      },
-    };
+export class CityController extends MainController {
+  async getDatesKeyboard(chatId: number, queryId: string, cityId: string) {
+    const options = new SendMessageOptionsBuilder()
+      .setReplyMarkup({ inline_keyboard: CityService.getDatesKeyboard() })
+      .build();
 
-    bot.sendMessage(chatId, '123', opts);
+    await this.bot.sendMessage(chatId, '123', options);
+    await this.bot.answerCallbackQuery(queryId, { show_alert: false });
   }
 }
