@@ -16,26 +16,26 @@ export class DateService {
           acc.push([
             {
               text: array[index - 1].pointOfDeparture.date.format('HH:mm'),
-              callback_data: `/time/${array[
+              callback_data: `/time?time=${array[
                 index - 1
               ].pointOfDeparture.date.toISOString()}`,
             },
             {
               text: item.pointOfDeparture.date.format('HH:mm'),
-              callback_data: `/time/${item.pointOfDeparture.date.toISOString()}`,
+              callback_data: `/time?time=${item.pointOfDeparture.date.toISOString()}`,
             },
           ]);
         } else if (acc.length === 3) {
           acc.push([
             {
               text: '\u{2B05}',
-              callback_data: `/date/${array[
+              callback_data: `/date?date=${array[
                 index - 1
               ].pointOfDeparture.date.toISOString()}`,
             },
             {
               text: '\u{27A1}',
-              callback_data: `/date/${item.pointOfDeparture.date.toISOString()}?skip=${
+              callback_data: `/date?date=${item.pointOfDeparture.date.toISOString()}&skip=${
                 skip + 6
               }&take=6`,
             },
