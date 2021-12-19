@@ -1,7 +1,10 @@
 export class QueryStringParser<T> {
   constructor(private readonly url: string) {}
 
-  parse(): T {
+  parse(): T | undefined {
+    if (!this.url.includes('?')) {
+      return;
+    }
     const entries = this.getQueryString()
       .split('&')
       .map((item) => item.split('='));
