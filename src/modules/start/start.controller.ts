@@ -1,18 +1,77 @@
-import { Message } from 'node-telegram-bot-api';
-import { MainController } from '../main.controller';
+import { Controller } from '../controller';
+import { StartService } from './start.service';
+import { SendMessageOptionsBuilder } from '../../builders/SendMessageOptionsBuilder';
 
-export class StartController extends MainController {
-  getCitiesKeyboard(msg: Message) {
-    const opts = {
-      reply_markup: {
-        inline_keyboard: [
-          [
-            { text: 'city1', callback_data: '/city/1' },
-            { text: 'city2', callback_data: '/city/1' },
-          ],
-        ],
-      },
-    };
-    this.bot.sendMessage(msg.chat.id, "I'm a test robot", opts);
+export class StartController extends Controller {
+  constructor(private chatId: number | null, private queryId: string | null) {
+    super();
+  }
+
+  private static findUser(userId: number) {
+    return false;
+  }
+
+  public async start() {
+    const options = new SendMessageOptionsBuilder()
+      .setInlineKeyboard(StartService.getStartKeyboard())
+      .build();
+
+    await super.sendMessage(this.chatId!, '123', options);
+  }
+
+  public async checkUserExistence(userId: number) {
+    const isValid = StartController.findUser(123);
+
+    if (!isValid) {
+      const options = new SendMessageOptionsBuilder()
+        .setInlineKeyboard(StartService.getInitialSetupKeyboard())
+        .build();
+
+      await super.sendMessage(
+        this.chatId!,
+        'Вы здесь впервые? Давайте проведём стартовую настройку!',
+        options,
+      );
+      await super.answerCallbackQuery(this.queryId!);
+    }
+  }
+
+  public setDepartureCity() {
+    this.getArrivalCitiesKeyboard();
+  }
+
+  public setArrivalCity() {
+    this.finishSetup();
+  }
+
+  public async getDepartureCitiesKeyboard() {
+    const options = new SendMessageOptionsBuilder()
+      .setInlineKeyboard(StartService.getDepartureCitiesKeyboard())
+      .build();
+
+    await super.sendMessage(
+      this.chatId!,
+      'Выберите город отправления',
+      options,
+    );
+    await super.answerCallbackQuery(this.queryId!);
+  }
+
+  public async finishSetup() {
+    const options = new SendMessageOptionsBuilder()
+      .setInlineKeyboard(StartService.getSearchKeyboard())
+      .build();
+
+    await super.sendMessage(this.chatId!, 'Настройка заверешена!', options);
+    await super.answerCallbackQuery(this.queryId!);
+  }
+
+  private async getArrivalCitiesKeyboard() {
+    const options = new SendMessageOptionsBuilder()
+      .setInlineKeyboard(StartService.getArrivalCitiesKeyboard())
+      .build();
+
+    await super.sendMessage(this.chatId!, 'Выберите город прибытия', options);
+    await super.answerCallbackQuery(this.queryId!);
   }
 }

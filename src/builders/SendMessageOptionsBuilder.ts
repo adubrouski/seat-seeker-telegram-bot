@@ -1,5 +1,6 @@
 import TelegramBot, {
   ForceReply,
+  InlineKeyboardButton,
   InlineKeyboardMarkup,
   ParseMode,
   ReplyKeyboardMarkup,
@@ -36,6 +37,20 @@ export class SendMessageOptionsBuilder {
   setReplyToMessageId(messageId: number) {
     this.sendMessageOptions.reply_to_message_id = messageId;
 
+    return this;
+  }
+
+  setInlineKeyboard(inlineKeyboard: InlineKeyboardButton[][]) {
+    const replyMarkup = this.sendMessageOptions.reply_markup;
+    if (replyMarkup) {
+      this.sendMessageOptions.reply_markup = {
+        ...replyMarkup,
+        inline_keyboard: inlineKeyboard,
+      };
+      return this;
+    }
+
+    this.sendMessageOptions.reply_markup = { inline_keyboard: inlineKeyboard };
     return this;
   }
 
