@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
     "lib": ["ES6"],
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -18,7 +18,8 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": false,
-    "noEmit": false
+    "noEmit": false,
+    "useUnknownInCatchVariables": false
   },
   "include": ["src", "lib"]
 }
