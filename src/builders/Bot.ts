@@ -1,5 +1,5 @@
 import TelegramBot from 'node-telegram-bot-api';
-import { TelegramConnectionError } from '../errors/HttpError';
+import { TelegramConnectionError } from '../errors/telegram-connection-error';
 
 export class Bot {
   public static instance: TelegramBot;
