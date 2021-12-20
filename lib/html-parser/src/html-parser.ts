@@ -4,8 +4,8 @@ import {
   PointOfDestination,
   Route,
   Seats,
-} from '../../src/models/route.model';
-import { dateParser } from '../date-parser';
+} from '../../../src/models/route.model';
+import { dateParser } from '../../date-parser';
 
 export class HtmlParser {
   private list: Route[];

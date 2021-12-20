@@ -1,4 +1,4 @@
-import { Months } from './enum/months.enum';
+import { Months } from '../enum/months.enum';
 import dayjs, { Dayjs } from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 
