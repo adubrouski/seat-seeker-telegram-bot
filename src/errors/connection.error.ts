@@ -1,11 +1,10 @@
 interface ErrorDetails {
-  status: number;
-  statusText: string;
+  code: number;
+  description: string;
 }
 
-export class TelegramConnectionError extends Error {
+export class ConnectionError extends Error {
   constructor(public message: string, public details: ErrorDetails) {
     super(message);
-    this.details = details;
   }
 }
