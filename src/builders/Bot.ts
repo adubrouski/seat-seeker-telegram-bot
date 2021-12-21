@@ -1,21 +1,26 @@
 import TelegramBot from 'node-telegram-bot-api';
 import { ConnectionError } from '../errors/connection.error';
 
+interface ConnectionConfig {
+  apiToken: string;
+  options: TelegramBot.ConstructorOptions;
+}
+
 export class Bot {
-  constructor(
-    private apiToken: string,
-    private config: TelegramBot.ConstructorOptions,
-  ) {}
+  constructor(private connectionConfig: ConnectionConfig) {}
 
   public static instance: TelegramBot;
 
   public start() {
-    const bot = new TelegramBot(this.apiToken, this.config);
+    const bot = new TelegramBot(
+      this.connectionConfig.apiToken,
+      this.connectionConfig.options,
+    );
 
     return Bot.checkConnection(bot)
       .then((name) => {
         Bot.instance = bot;
-        return bot;
+        return { bot, botName: name };
       })
       .catch((error) => {
         return Promise.reject(error);
