@@ -1,6 +1,9 @@
-import appConfig from '../appconfig.json';
-import { launchBot } from './startup/launch-bot';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
+import 'dayjs/locale/ru';
+import dayjs from 'dayjs';
+import { launch } from './launch/launch';
 
-launchBot(appConfig.API_TOKEN, appConfig.BOT_CONFIG).then(() => {
-  console.log('BOT IS RUNNING');
-});
+dayjs.extend(localizedFormat);
+dayjs.locale('ru');
+
+launch();
