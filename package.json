@@ -12,9 +12,10 @@
   "type": "module",
   "private": true,
   "dependencies": {
-    "node-telegram-bot-api": "0.56.0",
     "cheerio": "1.0.0-rc.10",
-    "dayjs": "1.10.7"
+    "dayjs": "1.10.7",
+    "mysql2": "^2.3.3",
+    "node-telegram-bot-api": "0.56.0"
   },
   "devDependencies": {
     "@types/node": "16.11.11",

@@ -1,38 +1,38 @@
 import TelegramBot from 'node-telegram-bot-api';
-import { TelegramConnectionError } from '../errors/telegram-connection-error';
+import { ConnectionError } from '../errors/connection.error';
 
 export class Bot {
-  public static instance: TelegramBot;
-
   constructor(
     private apiToken: string,
     private config: TelegramBot.ConstructorOptions,
   ) {}
 
-  public async start() {
-    try {
-      const bot = new TelegramBot(this.apiToken, this.config);
+  public static instance: TelegramBot;
 
-      await Bot.checkConnection(bot);
+  public start() {
+    const bot = new TelegramBot(this.apiToken, this.config);
 
-      Bot.instance = bot;
-
-      return bot;
-    } catch (error) {
-      throw error;
-    }
+    return Bot.checkConnection(bot)
+      .then((name) => {
+        Bot.instance = bot;
+        return bot;
+      })
+      .catch((error) => {
+        return Promise.reject(error);
+      });
   }
 
-  private static async checkConnection(bot: TelegramBot) {
-    try {
-      await bot.getMe();
-
-      return true;
-    } catch (error) {
-      throw new TelegramConnectionError('ConnectionError', {
-        status: error?.response?.statusCode ?? 500,
-        statusText: error?.response?.statusMessage ?? 'Internal server error',
-      });
-    }
+  private static checkConnection(bot: TelegramBot) {
+    return bot
+      .getMe()
+      .then((bot) => bot.first_name)
+      .catch((error) =>
+        Promise.reject(
+          new ConnectionError('TelegramConnectionError', {
+            code: error?.response?.statusCode ?? 999,
+            description: error?.response?.statusMessage ?? 'Unknown error',
+          }),
+        ),
+      );
   }
 }
