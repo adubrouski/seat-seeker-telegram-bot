@@ -18,7 +18,7 @@ export const useStartRouter = (query: CallbackQuery) => {
     startController.getDepartureCitiesKeyboard();
   });
 
-  router.match('/start/initial-setup/set-departure-city/:id', (req) => {
+  router.match('/start/initial-setup/set-departure-city/:id', () => {
     startController.setDepartureCity();
   });
 
