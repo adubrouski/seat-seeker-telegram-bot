@@ -8,7 +8,7 @@ import { START_REGEXP } from '../constants/constants';
 
 export const launch = async () => {
   try {
-    /* TELEGRAM-API CONNECTION */
+    /* TELEGRAM API CONNECTION */
     const { bot, botName } = await new Bot(appConfig.telegramApiConfig).start();
 
     bot.onText(START_REGEXP, ({ chat }) => {

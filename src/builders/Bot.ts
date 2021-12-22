@@ -2,7 +2,7 @@ import TelegramBot from 'node-telegram-bot-api';
 import { ConnectionError } from '../errors/connection.error';
 
 interface ConnectionConfig {
-  apiToken: string;
+  token: string;
   options: TelegramBot.ConstructorOptions;
 }
 
@@ -13,7 +13,7 @@ export class Bot {
 
   public start() {
     const bot = new TelegramBot(
-      this.connectionConfig.apiToken,
+      this.connectionConfig.token,
       this.connectionConfig.options,
     );
 
