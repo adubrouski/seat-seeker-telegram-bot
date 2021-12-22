@@ -1,7 +1,7 @@
 import { DateService } from './date.service';
-import { SendMessageOptionsBuilder } from '../../builders/SendMessageOptionsBuilder';
+import { MessageOptionsBuilder } from '../../builders/message-options.builder';
 import { queryStringParser } from '../../../lib/query-string-parser';
-import { Bot } from '../../builders/Bot';
+import { BotConnection } from '../../connections/bot.connection';
 
 export class DateController {
   async getTimesKeyboard(chatId: number, url: string) {
@@ -14,11 +14,11 @@ export class DateController {
         Number(take),
       );
       console.log(skip, take);
-      const options = new SendMessageOptionsBuilder()
+      const options = new MessageOptionsBuilder()
         .setReplyMarkup({ inline_keyboard: timesKeyboard })
         .build();
 
-      Bot.instance.sendMessage(chatId, '1233', options);
+      BotConnection.instance.sendMessage(chatId, '1233', options);
     } catch (error) {
       console.log(error);
     }
