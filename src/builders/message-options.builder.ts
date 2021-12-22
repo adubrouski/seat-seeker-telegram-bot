@@ -7,7 +7,7 @@ import TelegramBot, {
   ReplyKeyboardRemove,
 } from 'node-telegram-bot-api';
 
-export class SendMessageOptionsBuilder {
+export class MessageOptionsBuilder {
   private readonly sendMessageOptions: TelegramBot.SendMessageOptions;
 
   constructor() {
