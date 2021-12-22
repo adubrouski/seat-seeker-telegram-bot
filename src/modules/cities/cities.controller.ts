@@ -1,5 +1,5 @@
 import { CitiesService } from './cities.service';
-import { SendMessageOptionsBuilder } from '../../builders/SendMessageOptionsBuilder';
+import { MessageOptionsBuilder } from '../../builders/message-options.builder';
 import { Controller } from '../controller';
 
 export class CitiesController extends Controller {
@@ -8,7 +8,7 @@ export class CitiesController extends Controller {
   }
 
   public async getDepartureCities() {
-    const options = new SendMessageOptionsBuilder()
+    const options = new MessageOptionsBuilder()
       .setReplyMarkup({
         inline_keyboard: CitiesService.getDepartureCitiesKeyboard(),
       })
@@ -19,7 +19,7 @@ export class CitiesController extends Controller {
   }
 
   public async getArrivalCities() {
-    const options = new SendMessageOptionsBuilder()
+    const options = new MessageOptionsBuilder()
       .setReplyMarkup({
         inline_keyboard: CitiesService.getArrivalCitiesKeyboard(),
       })
@@ -30,7 +30,7 @@ export class CitiesController extends Controller {
   }
 
   async getDatesKeyboard() {
-    const options = new SendMessageOptionsBuilder()
+    const options = new MessageOptionsBuilder()
       .setReplyMarkup({ inline_keyboard: CitiesService.getDatesKeyboard() })
       .build();
 

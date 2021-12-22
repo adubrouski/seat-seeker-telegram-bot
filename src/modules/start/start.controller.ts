@@ -1,6 +1,6 @@
 import { Controller } from '../controller';
 import { StartService } from './start.service';
-import { SendMessageOptionsBuilder } from '../../builders/SendMessageOptionsBuilder';
+import { MessageOptionsBuilder } from '../../builders/message-options.builder';
 
 export class StartController extends Controller {
   constructor(private chatId: number | null, private queryId: string | null) {
@@ -12,7 +12,7 @@ export class StartController extends Controller {
   }
 
   public async start() {
-    const options = new SendMessageOptionsBuilder()
+    const options = new MessageOptionsBuilder()
       .setInlineKeyboard(StartService.getStartKeyboard())
       .build();
 
@@ -23,7 +23,7 @@ export class StartController extends Controller {
     const isValid = StartController.findUser(123);
 
     if (!isValid) {
-      const options = new SendMessageOptionsBuilder()
+      const options = new MessageOptionsBuilder()
         .setInlineKeyboard(StartService.getInitialSetupKeyboard())
         .build();
 
@@ -45,7 +45,7 @@ export class StartController extends Controller {
   }
 
   public async getDepartureCitiesKeyboard() {
-    const options = new SendMessageOptionsBuilder()
+    const options = new MessageOptionsBuilder()
       .setInlineKeyboard(StartService.getDepartureCitiesKeyboard())
       .build();
 
@@ -58,7 +58,7 @@ export class StartController extends Controller {
   }
 
   public async finishSetup() {
-    const options = new SendMessageOptionsBuilder()
+    const options = new MessageOptionsBuilder()
       .setInlineKeyboard(StartService.getSearchKeyboard())
       .build();
 
@@ -67,7 +67,7 @@ export class StartController extends Controller {
   }
 
   private async getArrivalCitiesKeyboard() {
-    const options = new SendMessageOptionsBuilder()
+    const options = new MessageOptionsBuilder()
       .setInlineKeyboard(StartService.getArrivalCitiesKeyboard())
       .build();
 
