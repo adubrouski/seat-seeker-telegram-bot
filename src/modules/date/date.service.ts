@@ -1,4 +1,4 @@
-import { getHtmlContent } from '../../queries/html.query';
+import { getHtmlContent } from '../../services/html.service';
 import { htmlParser } from '../../../lib/html-parser';
 import { InlineKeyboardButton } from 'node-telegram-bot-api';
 
