@@ -1,7 +1,7 @@
 import mysql, { Connection, ConnectionOptions } from 'mysql2/promise';
 import { ConnectionError } from '../errors/connection.error';
 
-export class Database {
+export class DatabaseConnection {
   constructor(private options: ConnectionOptions) {}
 
   public static connection: Connection;
@@ -10,7 +10,7 @@ export class Database {
     return mysql
       .createConnection(this.options)
       .then((connection) => {
-        Database.connection = connection;
+        DatabaseConnection.connection = connection;
         return connection.config.database!;
       })
       .catch((error) => {

@@ -6,7 +6,7 @@ interface ConnectionConfig {
   options: TelegramBot.ConstructorOptions;
 }
 
-export class Bot {
+export class BotConnection {
   constructor(private connectionConfig: ConnectionConfig) {}
 
   public static instance: TelegramBot;
@@ -17,9 +17,9 @@ export class Bot {
       this.connectionConfig.options,
     );
 
-    return Bot.checkConnection(bot)
+    return BotConnection.checkConnection(bot)
       .then((name) => {
-        Bot.instance = bot;
+        BotConnection.instance = bot;
         return { bot, botName: name };
       })
       .catch((error) => {
