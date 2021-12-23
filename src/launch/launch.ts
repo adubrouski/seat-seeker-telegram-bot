@@ -21,12 +21,13 @@ export const launch = async () => {
     console.log('CONNECT TO TELEGRAM API - SUCCESS');
 
     /* DATABASE CONNECTION */
-    const databaseName = await new DatabaseConnection(
-      appConfig.databaseConfig,
-    ).connect();
+    const databaseConnection = new DatabaseConnection(appConfig.databaseConfig);
+    const databaseName = await databaseConnection.connect();
 
     console.log(`CONNECT TO ${databaseName} DATABASE - SUCCESS`);
     console.log(`BOT ${botName} IS RUNNING`);
+
+    /* CREATE TABLES IF NOT EXIST */
   } catch (error) {
     if (error instanceof ConnectionError) {
       const { details, message } = error;
