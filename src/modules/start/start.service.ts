@@ -1,68 +1,64 @@
+import { DatabaseConnection } from '../../connections/database.connection';
+
 export class StartService {
-  static getDepartureCitiesKeyboard() {
-    return [
-      [
-        {
-          text: 'DepCity1',
-          callback_data: '/start/initial-setup/set-departure-city/2',
-        },
-        {
-          text: 'DepCity2',
-          callback_data: '/start/initial-setup/set-departure-city/2',
-        },
-        {
-          text: 'DepCity3',
-          callback_data: '/start/initial-setup/set-departure-city/3',
-        },
-      ],
-      [
-        {
-          text: 'DepCity4',
-          callback_data: '/start/initial-setup/set-departure-city/4',
-        },
-        {
-          text: 'DepCity5',
-          callback_data: '/start/initial-setup/set-departure-city/5',
-        },
-        {
-          text: 'DepCity6',
-          callback_data: '/start/initial-setup/set-departure-city/6',
-        },
-      ],
-    ];
+  static async getDepartureCitiesKeyboard() {
+    const cities = await DatabaseConnection.connection.table('cities').select();
+
+    return cities.reduce((acc, item, index, array) => {
+      const increasedIndex = index + 1;
+      if (increasedIndex % 3 === 0 && index !== 0) {
+        acc.push([
+          {
+            text: array[index - 1].name,
+            callback_data: `/start/initial-setup/set-departure-city/${
+              array[index - 1].id
+            }`,
+          },
+          {
+            text: array[index - 2].name,
+            callback_data: `/start/initial-setup/set-departure-city/${
+              array[index - 2].id
+            }`,
+          },
+          {
+            text: array[index].name,
+            callback_data: `/start/initial-setup/set-departure-city/${array[index].id}`,
+          },
+        ]);
+      }
+
+      return acc;
+    }, []);
   }
 
-  static getArrivalCitiesKeyboard() {
-    return [
-      [
-        {
-          text: 'ArrCity1',
-          callback_data: '/start/initial-setup/set-arrival-city/1',
-        },
-        {
-          text: 'ArrCity2',
-          callback_data: '/start/initial-setup/set-arrival-city/2',
-        },
-        {
-          text: 'ArrCity3',
-          callback_data: '/start/initial-setup/set-arrival-city/3',
-        },
-      ],
-      [
-        {
-          text: 'ArrCity4',
-          callback_data: '/start/initial-setup/set-arrival-city/4',
-        },
-        {
-          text: 'ArrCity5',
-          callback_data: '/start/initial-setup/set-arrival-city/5',
-        },
-        {
-          text: 'ArrCity6',
-          callback_data: '/start/initial-setup/set-arrival-city/6',
-        },
-      ],
-    ];
+  static async getArrivalCitiesKeyboard() {
+    const cities = await DatabaseConnection.connection.table('cities').select();
+
+    return cities.reduce((acc, item, index, array) => {
+      const increasedIndex = index + 1;
+      if (increasedIndex % 3 === 0 && index !== 0) {
+        acc.push([
+          {
+            text: array[index - 1].name,
+            callback_data: `/start/initial-setup/set-arrival-city/${
+              array[index - 1].id
+            }`,
+          },
+          {
+            text: array[index - 2].name,
+            callback_data: `/start/initial-setup/set-arrival-city/${
+              array[index - 2].id
+            }`,
+          },
+          {
+            text: array[index].name,
+            callback_data: `/start/initial-setup/set-arrival-city/${array[index].id}`,
+          },
+        ]);
+      }
+
+      return acc;
+    }, []);
   }
 
   static getStartKeyboard() {

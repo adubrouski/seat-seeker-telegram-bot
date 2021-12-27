@@ -11,18 +11,24 @@ export const useStartRouter = (query: CallbackQuery) => {
   const startController = new StartController(query.message.chat.id, query.id);
 
   router.match('/start/user-existence', () => {
-    startController.checkUserExistence(123);
+    startController.checkUserExistence(query.from.id, query.from.username!);
   });
 
   router.match('/start/initial-setup/departure-city-list', () => {
     startController.getDepartureCitiesKeyboard();
   });
 
-  router.match('/start/initial-setup/set-departure-city/:id', () => {
-    startController.setDepartureCity();
-  });
+  router.match(
+    '/start/initial-setup/set-departure-city/:id',
+    (parameters: any) => {
+      startController.setDepartureCity(parameters.parameter.id);
+    },
+  );
 
-  router.match('/start/initial-setup/set-arrival-city/:id', () => {
-    startController.setArrivalCity();
-  });
+  router.match(
+    '/start/initial-setup/set-arrival-city/:id',
+    (parameters: any) => {
+      startController.setArrivalCity(parameters.parameter.id);
+    },
+  );
 };
