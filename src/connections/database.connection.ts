@@ -1,4 +1,5 @@
-import knex, { Knex } from 'knex';
+import createKnexConnection, { Knex } from 'knex';
+import { v4 as uuid4 } from 'uuid';
 import appConfig from '../../appconfig.json';
 import { ConnectionError } from '../errors/connection.error';
 
@@ -8,65 +9,45 @@ export class DatabaseConnection {
   public static connection: Knex;
 
   public async connect() {
-    const gg = knex(this.config);
-    try {
-      // const ggg = gg.schema
-      //   .createTableIfNotExists('test', (table) => {
-      //     table.uuid('id').primary();
-      //     table.string('name', 32);
-      //     table.timestamps();
-      //   })
-      //   .createTableIfNotExists('test', (table) => {
-      //     table.increments();
-      //     table.string('name', 32);
-      //     table.timestamps();
-      //   })
-      //   .then(() => null);
-      // gg('test')
-      //   .insert({ id: gg.raw('UUID()'), name: 'gergererg' })
-      //   .then((res) => console.log(res))
-      //   .catch((error) => {
-      //     console.log(error);
-      //   });
-      // console.log(ggg);
-    } catch (error) {
-      console.log(error);
-    }
-
-    // return mysql
-    //   .createConnection(this.options)
-    //   .then((connection) => {
-    //     DatabaseConnection.connection = connection;
-    //
-    //     return connection;
-    //   })
-    //   .then(async (connection) => {
-    //     await this.init(connection);
-    //
-    //     return connection.config.database!;
-    //   })
-    //   .catch((error) =>
-    //     Promise.reject(
-    //       new ConnectionError('DatabaseConnectionError', {
-    //         code: error.errno ?? 999,
-    //         description: error.code ?? 'Unknown error',
-    //       }),
-    //     ),
-    //   );
+    const knex = createKnexConnection(this.config);
+    DatabaseConnection.connection = knex;
+    await this.createInitialTables(knex);
   }
 
-  public async init(connection: Knex) {
+  public async createInitialTables(knex: Knex) {
     try {
-      // await connection.query(
-      //   'CREATE TABLE IF NOT EXISTS `cities` (id VARCHAR(7) NOT NULL, name VARCHAR(12) NOT NULL, PRIMARY KEY (`id`))',
-      // );
-      // await connection.query(
-      //   'INSERT IGNORE INTO `cities` (id, name) VALUES ?',
-      //   [appConfig.cities],
-      // );
-      // await connection.query(
-      //   'CREATE TABLE IF NOT EXISTS `users` (id BIGINT(12) unsigned NOT NULL, name VARCHAR(32) NOT NULL, PRIMARY KEY (`id`))',
-      // );
+      const isCitiesTableExists = await knex.schema.hasTable('cities');
+      const isUsersTableExists = await knex.schema.hasTable('users');
+      const isSettingsTableExists = await knex.schema.hasTable('settings');
+
+      if (!isCitiesTableExists) {
+        await knex.schema.createTable('cities', (table) => {
+          table.string('id', 7).primary();
+          table.string('name', 30).notNullable();
+        });
+
+        await knex('cities').insert(appConfig.cities);
+      }
+
+      if (!isUsersTableExists) {
+        await knex.schema.createTable('users', (table) => {
+          table.integer('id').primary();
+          table.string('name', 30);
+        });
+      }
+
+      if (!isSettingsTableExists) {
+        await knex.schema.createTable('settings', (table) => {
+          table.increments('id').primary();
+          table.integer('user_id').notNullable();
+          table.string('city_from', 7).notNullable();
+          table.string('city_to', 7).notNullable();
+
+          table.foreign('user_id').references('id').inTable('users');
+          table.foreign('city_from').references('id').inTable('cities');
+          table.foreign('city_to').references('id').inTable('cities');
+        });
+      }
     } catch (error) {
       console.log(error);
     }
