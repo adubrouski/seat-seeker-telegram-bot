@@ -6,24 +6,29 @@ import { DatabaseConnection } from '../../connections/database.connection';
 interface UserConfig {
   userId: number | null;
   userName: string | null;
-  from: string | null;
-  to: string | null;
+  from?: string | null;
+  to?: string | null;
+}
+
+interface EditMessageOptions {
+  userId: number;
+  userName: string;
+  messageId: number;
+  chatId: number;
+}
+
+interface SetCityOptions {
+  userId: number;
+  cityId: string;
+  messageId: number;
+  chatId: number;
 }
 
 export class StartController extends Controller {
-  static config: UserConfig = {
-    userId: null,
-    userName: null,
-    from: null,
-    to: null,
-  };
+  static config: { [key: number]: UserConfig } = {};
 
   constructor(private chatId: number | null, private queryId: string | null) {
     super();
-  }
-
-  private static findUser(userId: number) {
-    return false;
   }
 
   public async start() {
@@ -31,81 +36,122 @@ export class StartController extends Controller {
       .setInlineKeyboard(StartService.getStartKeyboard())
       .build();
 
-    await super.sendMessage(this.chatId!, '123', options);
+    await super.sendMessage(this.chatId!, 'Начать', options);
   }
 
-  public async checkUserExistence(userId: number, userName: string) {
-    const isValid = StartController.findUser(123);
-
-    StartController.config.userId = userId;
-    StartController.config.userName = userName;
-
-    if (!isValid) {
-      const options = new MessageOptionsBuilder()
-        .setInlineKeyboard(StartService.getInitialSetupKeyboard())
-        .build();
-
-      await super.sendMessage(
-        this.chatId!,
-        'Вы здесь впервые? Давайте проведём стартовую настройку!',
-        options,
-      );
-      await super.answerCallbackQuery(this.queryId!);
-    }
-  }
-
-  public setDepartureCity(id: string) {
-    StartController.config.from = id;
-    this.getArrivalCitiesKeyboard();
-  }
-
-  public setArrivalCity(id: string) {
-    StartController.config.to = id;
-    this.finishSetup();
-  }
-
-  public async getDepartureCitiesKeyboard() {
-    const options = new MessageOptionsBuilder()
-      .setInlineKeyboard(await StartService.getDepartureCitiesKeyboard())
-      .build();
-
-    await super.sendMessage(
-      this.chatId!,
-      'Выберите город отправления',
-      options,
-    );
-    await super.answerCallbackQuery(this.queryId!);
-  }
-
-  public async finishSetup() {
-    const options = new MessageOptionsBuilder()
-      .setInlineKeyboard(StartService.getSearchKeyboard())
-      .build();
-    console.log(StartController.config);
+  public async checkUserExistence(options: EditMessageOptions) {
     try {
-      await DatabaseConnection.connection('users').insert({
-        id: StartController.config.userId,
-        name: StartController.config.userName,
-      });
-      await DatabaseConnection.connection('settings').insert({
-        user_id: StartController.config.userId,
-        city_from: StartController.config.from,
-        city_to: StartController.config.to,
-      });
-    } catch (e) {
-      console.log(e);
-    }
+      const { userId, userName, chatId, messageId } = options;
+      const isValid = StartController.findUser(123);
 
-    await super.sendMessage(this.chatId!, 'Настройка заверешена!', options);
-    await super.answerCallbackQuery(this.queryId!);
+      StartController.config[userId] = {} as UserConfig;
+      StartController.config[userId].userId = userId;
+      StartController.config[userId].userName = userName;
+
+      if (!isValid) {
+        await super.editMessageText(
+          'Вы здесь впервые? Давайте проведём стартовую настройку!',
+          {
+            chat_id: chatId,
+            message_id: messageId,
+            reply_markup: {
+              inline_keyboard: StartService.getInitialSetupKeyboard(),
+            },
+          },
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
-  private async getArrivalCitiesKeyboard() {
-    const options = new MessageOptionsBuilder()
-      .setInlineKeyboard(await StartService.getArrivalCitiesKeyboard())
-      .build();
+  public setDepartureCity(options: SetCityOptions) {
+    try {
+      const { userId, cityId, messageId, chatId } = options;
+      StartController.config[userId].from = cityId;
+      this.getArrivalCitiesKeyboard({ messageId, chatId });
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
-    await super.sendMessage(this.chatId!, 'Выберите город прибытия', options);
-    await super.answerCallbackQuery(this.queryId!);
+  public setArrivalCity(options: SetCityOptions) {
+    try {
+      const { userId, cityId, messageId, chatId } = options;
+      StartController.config[userId].to = cityId;
+      this.finishSetup({ userId, messageId, chatId });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  public async getDepartureCitiesKeyboard(
+    options: Pick<EditMessageOptions, 'messageId' | 'chatId'>,
+  ) {
+    try {
+      const { messageId, chatId } = options;
+
+      await super.editMessageText('Выберите город отправления', {
+        chat_id: chatId,
+        message_id: messageId,
+        reply_markup: {
+          inline_keyboard: await StartService.getDepartureCitiesKeyboard(),
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  public async finishSetup(options: Omit<EditMessageOptions, 'userName'>) {
+    try {
+      const { chatId, userId, messageId } = options;
+
+      await Promise.all([
+        DatabaseConnection.connection('users').insert({
+          id: StartController.config[userId].userId,
+          name: StartController.config[userId].userName,
+        }),
+        DatabaseConnection.connection('settings').insert({
+          user_id: StartController.config[userId].userId,
+          city_from: StartController.config[userId].from,
+          city_to: StartController.config[userId].to,
+        }),
+      ]);
+
+      delete StartController.config[userId];
+
+      await super.editMessageText('Настройка завершена', {
+        chat_id: chatId,
+        message_id: messageId,
+        reply_markup: {
+          inline_keyboard: StartService.getSearchKeyboard(),
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  private async getArrivalCitiesKeyboard(
+    options: Pick<EditMessageOptions, 'chatId' | 'messageId'>,
+  ) {
+    try {
+      const { chatId, messageId } = options;
+
+      await super.editMessageText('Выберите город прибытия', {
+        chat_id: chatId,
+        message_id: messageId,
+        reply_markup: {
+          inline_keyboard: await StartService.getArrivalCitiesKeyboard(),
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  private static findUser(userId: number) {
+    return false;
   }
 }

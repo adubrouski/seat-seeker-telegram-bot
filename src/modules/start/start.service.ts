@@ -2,33 +2,39 @@ import { DatabaseConnection } from '../../connections/database.connection';
 
 export class StartService {
   static async getDepartureCitiesKeyboard() {
-    const cities = await DatabaseConnection.connection.table('cities').select();
+    try {
+      const cities = await DatabaseConnection.connection
+        .table('cities')
+        .select();
 
-    return cities.reduce((acc, item, index, array) => {
-      const increasedIndex = index + 1;
-      if (increasedIndex % 3 === 0 && index !== 0) {
-        acc.push([
-          {
-            text: array[index - 1].name,
-            callback_data: `/start/initial-setup/set-departure-city/${
-              array[index - 1].id
-            }`,
-          },
-          {
-            text: array[index - 2].name,
-            callback_data: `/start/initial-setup/set-departure-city/${
-              array[index - 2].id
-            }`,
-          },
-          {
-            text: array[index].name,
-            callback_data: `/start/initial-setup/set-departure-city/${array[index].id}`,
-          },
-        ]);
-      }
+      return cities.reduce((acc, item, index, array) => {
+        const increasedIndex = index + 1;
+        if (increasedIndex % 3 === 0 && index !== 0) {
+          acc.push([
+            {
+              text: array[index - 1].name,
+              callback_data: `/start/initial-setup/set-departure-city/${
+                array[index - 1].id
+              }`,
+            },
+            {
+              text: array[index - 2].name,
+              callback_data: `/start/initial-setup/set-departure-city/${
+                array[index - 2].id
+              }`,
+            },
+            {
+              text: array[index].name,
+              callback_data: `/start/initial-setup/set-departure-city/${array[index].id}`,
+            },
+          ]);
+        }
 
-      return acc;
-    }, []);
+        return acc;
+      }, []);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   static async getArrivalCitiesKeyboard() {
