@@ -32,11 +32,13 @@ export class StartController extends Controller {
   }
 
   public async start() {
-    const options = new MessageOptionsBuilder()
-      .setInlineKeyboard(StartService.getStartKeyboard())
-      .build();
+    try {
+      const options = new MessageOptionsBuilder()
+        .setInlineKeyboard(StartService.getStartKeyboard())
+        .build();
 
-    await super.sendMessage(this.chatId!, 'Начать', options);
+      await super.sendMessage(this.chatId!, 'Начать', options);
+    } catch (error) {}
   }
 
   public async checkUserExistence(options: EditMessageOptions) {

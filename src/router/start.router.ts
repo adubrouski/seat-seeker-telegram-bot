@@ -1,6 +1,7 @@
 import { StartController } from '../modules/start/start.controller';
 import { TelegramRouter } from '../../lib/telegram-router';
 import { CallbackQuery } from 'node-telegram-bot-api';
+import { queryDataParser } from '../../lib/query-data-parser';
 
 export const useStartRouter = (query: CallbackQuery) => {
   if (!query.data || !query.message) return;
@@ -14,9 +15,9 @@ export const useStartRouter = (query: CallbackQuery) => {
     chatId: query.message?.chat.id!,
   };
 
-  router.match('/start/user-existence', () => {
+  if (queryDataParser(query.data).parseAction() === 'CHECK_USER_EXISTENCE') {
     startController.checkUserExistence(editMessageOptions);
-  });
+  }
 
   router.match('/start/initial-setup/departure-city-list', () => {
     startController.getDepartureCitiesKeyboard({

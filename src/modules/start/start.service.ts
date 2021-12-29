@@ -72,7 +72,7 @@ export class StartService {
       [
         {
           text: "Let's go!",
-          callback_data: '/start/user-existence',
+          callback_data: '[start]{CHECK_USER_EXISTENCE}(skip=0,take=20)',
         },
       ],
     ];
