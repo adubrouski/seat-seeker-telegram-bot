@@ -1,13 +1,21 @@
-import { Knex } from 'knex';
+import { BaseRepository } from './base.repository';
 
-interface IUsersRepository {
-  findById(userId: number): any;
+interface IUsersRepository<T> {
+  isUserExist(item: Partial<T>): Promise<boolean>;
 }
 
-export class UsersRepository implements IUsersRepository {
-  constructor(private qb: Knex, private tableName: string) {}
+interface User {
+  id: number;
+  username: string;
+}
 
-  async findById(userId: number) {
-    return this.qb(this.tableName).where({ id: userId }).select();
+export class UsersRepository
+  extends BaseRepository<User>
+  implements IUsersRepository<User>
+{
+  public async isUserExist(item: Partial<User>): Promise<boolean> {
+    const user = this.findOne(item);
+
+    return !!user;
   }
 }

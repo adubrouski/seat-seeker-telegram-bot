@@ -1,8 +1,5 @@
 import createKnexConnection, { Knex } from 'knex';
-import { v4 as uuid4 } from 'uuid';
 import appConfig from '../../appconfig.json';
-import { ConnectionError } from '../errors/connection.error';
-import { UsersRepository } from '../repositories/users.repository';
 
 export class DatabaseConnection {
   constructor(private config: Knex.Config) {}
@@ -10,11 +7,13 @@ export class DatabaseConnection {
   public static connection: Knex;
 
   public async connect() {
-    const knex = createKnexConnection(this.config);
-    DatabaseConnection.connection = knex;
-    await this.createInitialTables(knex);
-
-    console.log(await new UsersRepository(knex, 'users').findById(70514958));
+    try {
+      const knex = createKnexConnection(this.config);
+      DatabaseConnection.connection = knex;
+      await this.createInitialTables(knex);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   public async createInitialTables(knex: Knex) {
