@@ -1,0 +1,5 @@
+export type StartAction =
+  | 'CHECK_USER_EXISTENCE'
+  | 'GET_DEPARTURE_CITIES'
+  | 'SET_DEPARTURE_CITY'
+  | 'SET_ARRIVAL_CITY';
