@@ -1,6 +1,14 @@
 import { DatabaseConnection } from '../../connections/database.connection';
+import {
+  CallbackDataOptions,
+  createCallbackData,
+} from '../../helpers/query-data.helper';
+import { StartAction } from '../../models/start-controller.model';
 
 export class StartService {
+  static createCallbackData = (options: CallbackDataOptions<StartAction>) =>
+    createCallbackData<StartAction>(options);
+
   static async getDepartureCitiesKeyboard() {
     try {
       const cities = await DatabaseConnection.connection
@@ -12,20 +20,28 @@ export class StartService {
         if (increasedIndex % 3 === 0 && index !== 0) {
           acc.push([
             {
+              text: array[index].name,
+              callback_data: StartService.createCallbackData({
+                controller: 'start',
+                action: 'SET_DEPARTURE_CITY',
+                parameters: { id: array[index].id },
+              }),
+            },
+            {
               text: array[index - 1].name,
-              callback_data: `/start/initial-setup/set-departure-city/${
-                array[index - 1].id
-              }`,
+              callback_data: StartService.createCallbackData({
+                controller: 'start',
+                action: 'SET_DEPARTURE_CITY',
+                parameters: { id: array[index - 1].id },
+              }),
             },
             {
               text: array[index - 2].name,
-              callback_data: `/start/initial-setup/set-departure-city/${
-                array[index - 2].id
-              }`,
-            },
-            {
-              text: array[index].name,
-              callback_data: `/start/initial-setup/set-departure-city/${array[index].id}`,
+              callback_data: StartService.createCallbackData({
+                controller: 'start',
+                action: 'SET_DEPARTURE_CITY',
+                parameters: { id: array[index - 2].id },
+              }),
             },
           ]);
         }
@@ -42,23 +58,32 @@ export class StartService {
 
     return cities.reduce((acc, item, index, array) => {
       const increasedIndex = index + 1;
+
       if (increasedIndex % 3 === 0 && index !== 0) {
         acc.push([
           {
+            text: array[index].name,
+            callback_data: StartService.createCallbackData({
+              controller: 'start',
+              action: 'SET_ARRIVAL_CITY',
+              parameters: { id: array[index].id },
+            }),
+          },
+          {
             text: array[index - 1].name,
-            callback_data: `/start/initial-setup/set-arrival-city/${
-              array[index - 1].id
-            }`,
+            callback_data: StartService.createCallbackData({
+              controller: 'start',
+              action: 'SET_ARRIVAL_CITY',
+              parameters: { id: array[index - 1].id },
+            }),
           },
           {
             text: array[index - 2].name,
-            callback_data: `/start/initial-setup/set-arrival-city/${
-              array[index - 2].id
-            }`,
-          },
-          {
-            text: array[index].name,
-            callback_data: `/start/initial-setup/set-arrival-city/${array[index].id}`,
+            callback_data: StartService.createCallbackData({
+              controller: 'start',
+              action: 'SET_ARRIVAL_CITY',
+              parameters: { id: array[index - 2].id },
+            }),
           },
         ]);
       }
@@ -68,22 +93,32 @@ export class StartService {
   }
 
   static getStartKeyboard() {
+    const callbackData = StartService.createCallbackData({
+      controller: 'start',
+      action: 'CHECK_USER_EXISTENCE',
+    });
+
     return [
       [
         {
           text: "Let's go!",
-          callback_data: '[start]{CHECK_USER_EXISTENCE}(skip=0,take=20)',
+          callback_data: callbackData,
         },
       ],
     ];
   }
 
   static getInitialSetupKeyboard() {
+    const callbackData = StartService.createCallbackData({
+      controller: 'start',
+      action: 'GET_DEPARTURE_CITIES',
+    });
+
     return [
       [
         {
           text: 'Давай!',
-          callback_data: '/start/initial-setup/departure-city-list',
+          callback_data: callbackData,
         },
       ],
     ];
