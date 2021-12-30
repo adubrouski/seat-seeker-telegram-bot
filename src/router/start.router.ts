@@ -6,7 +6,7 @@ import { StartAction } from '../models/start-controller.model';
 export const useStartRouter = (query: CallbackQuery) => {
   if (!query.data || !query.message) return;
 
-  const startController = new StartController(query.message.chat.id, query.id);
+  const startController = new StartController();
   const editMessageOptions = {
     userName: query.from.username!,
     userId: query.from.id,
