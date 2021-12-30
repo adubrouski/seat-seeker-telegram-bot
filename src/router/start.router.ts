@@ -1,13 +1,12 @@
 import { StartController } from '../modules/start/start.controller';
-import { TelegramRouter } from '../../lib/telegram-router';
 import { CallbackQuery } from 'node-telegram-bot-api';
 import { queryDataParser } from '../../lib/query-data-parser';
+import { StartAction } from '../models/start-controller.model';
 
 export const useStartRouter = (query: CallbackQuery) => {
   if (!query.data || !query.message) return;
 
-  const router = new TelegramRouter(query.data);
-  const startController = new StartController(query.message.chat.id, query.id);
+  const startController = new StartController();
   const editMessageOptions = {
     userName: query.from.username!,
     userId: query.from.id,
@@ -15,38 +14,36 @@ export const useStartRouter = (query: CallbackQuery) => {
     chatId: query.message?.chat.id!,
   };
 
-  if (queryDataParser(query.data).parseAction() === 'CHECK_USER_EXISTENCE') {
-    startController.checkUserExistence(editMessageOptions);
-  }
+  const dataParser = queryDataParser(query.data);
+  const action = dataParser.parseAction() as StartAction;
 
-  router.match('/start/initial-setup/departure-city-list', () => {
-    startController.getDepartureCitiesKeyboard({
-      chatId: query.message?.chat.id!,
-      messageId: query.message?.message_id!,
-    });
-  });
+  switch (action) {
+    case 'CHECK_USER_EXISTENCE':
+      return startController.checkUserExistence(editMessageOptions);
+    case 'GET_DEPARTURE_CITIES':
+      return startController.getDepartureCitiesKeyboard({
+        chatId: query.message?.chat.id!,
+        messageId: query.message?.message_id!,
+      });
+    case 'SET_DEPARTURE_CITY': {
+      const parameters = dataParser.parseParameters<{ id: string }>();
 
-  router.match(
-    '/start/initial-setup/set-departure-city/:id',
-    (parameters: any) => {
-      startController.setDepartureCity({
+      return startController.setDepartureCity({
         userId: query.from.id,
-        cityId: parameters.parameter.id,
+        cityId: parameters.id,
         messageId: query.message?.message_id!,
         chatId: query.message?.chat.id!,
       });
-    },
-  );
+    }
+    case 'SET_ARRIVAL_CITY': {
+      const parameters = dataParser.parseParameters<{ id: string }>();
 
-  router.match(
-    '/start/initial-setup/set-arrival-city/:id',
-    (parameters: any) => {
       startController.setArrivalCity({
         userId: query.from.id,
-        cityId: parameters.parameter.id,
+        cityId: parameters.id,
         messageId: query.message?.message_id!,
         chatId: query.message?.chat.id!,
       });
-    },
-  );
+    }
+  }
 };

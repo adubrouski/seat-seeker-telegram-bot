@@ -1,10 +1,10 @@
 import { BaseRepository } from './base.repository';
 
-interface IUsersRepository<T> {
+export interface IUsersRepository<T> {
   isUserExist(item: Partial<T>): Promise<boolean>;
 }
 
-interface User {
+export interface User {
   id: number;
   username: string;
 }
