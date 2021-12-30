@@ -6,8 +6,9 @@ import {
 import { StartAction } from '../../models/start-controller.model';
 
 export class StartService {
-  static createCallbackData = (options: CallbackDataOptions<StartAction>) =>
-    createCallbackData<StartAction>(options);
+  static createCallbackData = (
+    options: Omit<CallbackDataOptions<StartAction>, 'controller'>,
+  ) => createCallbackData<StartAction>({ ...options, controller: 'start' });
 
   static async getDepartureCitiesKeyboard() {
     try {
@@ -17,12 +18,12 @@ export class StartService {
 
       return cities.reduce((acc, item, index, array) => {
         const increasedIndex = index + 1;
+
         if (increasedIndex % 3 === 0 && index !== 0) {
           acc.push([
             {
               text: array[index].name,
               callback_data: StartService.createCallbackData({
-                controller: 'start',
                 action: 'SET_DEPARTURE_CITY',
                 parameters: { id: array[index].id },
               }),
@@ -30,7 +31,6 @@ export class StartService {
             {
               text: array[index - 1].name,
               callback_data: StartService.createCallbackData({
-                controller: 'start',
                 action: 'SET_DEPARTURE_CITY',
                 parameters: { id: array[index - 1].id },
               }),
@@ -38,7 +38,6 @@ export class StartService {
             {
               text: array[index - 2].name,
               callback_data: StartService.createCallbackData({
-                controller: 'start',
                 action: 'SET_DEPARTURE_CITY',
                 parameters: { id: array[index - 2].id },
               }),
@@ -64,7 +63,6 @@ export class StartService {
           {
             text: array[index].name,
             callback_data: StartService.createCallbackData({
-              controller: 'start',
               action: 'SET_ARRIVAL_CITY',
               parameters: { id: array[index].id },
             }),
@@ -72,7 +70,6 @@ export class StartService {
           {
             text: array[index - 1].name,
             callback_data: StartService.createCallbackData({
-              controller: 'start',
               action: 'SET_ARRIVAL_CITY',
               parameters: { id: array[index - 1].id },
             }),
@@ -80,7 +77,6 @@ export class StartService {
           {
             text: array[index - 2].name,
             callback_data: StartService.createCallbackData({
-              controller: 'start',
               action: 'SET_ARRIVAL_CITY',
               parameters: { id: array[index - 2].id },
             }),
@@ -94,7 +90,6 @@ export class StartService {
 
   static getStartKeyboard() {
     const callbackData = StartService.createCallbackData({
-      controller: 'start',
       action: 'CHECK_USER_EXISTENCE',
     });
 
@@ -110,7 +105,6 @@ export class StartService {
 
   static getInitialSetupKeyboard() {
     const callbackData = StartService.createCallbackData({
-      controller: 'start',
       action: 'GET_DEPARTURE_CITIES',
     });
 
