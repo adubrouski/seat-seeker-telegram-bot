@@ -6,18 +6,12 @@ export class QueryDataParser {
   }
 
   parseAction() {
-    return this.queryData.match(/{(\w*?)}/)?.[1];
+    return this.queryData.match(/#(\w*?)#/)?.[1];
   }
 
-  parseParameters() {
-    const parameters = this.queryData.match(/\((.*?)\)/)?.[1];
+  parseParameters<T>(): T {
+    const parameters = this.queryData.match(/{(.*?)}/)![0];
 
-    if (!parameters) return;
-
-    return Object.fromEntries(
-      parameters.split(',').map((item) => item.trim().split('=')),
-    );
+    return JSON.parse(parameters);
   }
-
-  parse() {}
 }
