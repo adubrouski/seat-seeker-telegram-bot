@@ -20,6 +20,10 @@ export abstract class BaseRepository<T> implements IBaseRepository<T> {
     return this.qb.where(item).select();
   }
 
+  public findAll(): Promise<T[]> {
+    return this.qb.select();
+  }
+
   public findOne(item: Partial<T>): Promise<T | undefined> {
     return this.qb.where(item).first();
   }
