@@ -4,8 +4,8 @@ import {
   createCallbackData,
 } from '../../helpers/query-data.helper';
 import { StartAction } from '../../models/start-controller.model';
-import { UsersRepository } from '../../repositories/users.repository';
-import { CitiesRepository } from '../../repositories/cities.repository';
+import { IUsersRepository, User } from '../../repositories/users.repository';
+import { City, ICitiesRepository } from '../../repositories/cities.repository';
 import { InlineKeyboardButton } from 'node-telegram-bot-api';
 
 interface ReplyItem {
@@ -21,8 +21,8 @@ export class StartService {
   ) => createCallbackData<StartAction>({ ...options, controller: 'start' });
 
   constructor(
-    private userRepository: UsersRepository,
-    private citiesRepository: CitiesRepository,
+    private userRepository: IUsersRepository<User>,
+    private citiesRepository: ICitiesRepository<City>,
   ) {}
 
   public async getStartItems(userId: number) {
