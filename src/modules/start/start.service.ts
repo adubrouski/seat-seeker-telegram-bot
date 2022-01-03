@@ -31,34 +31,20 @@ export class StartService {
       action: isUserExist ? 'START_SEARCH' : 'GET_DEPARTURE_CITIES',
     });
 
-    if (isUserExist) {
-      return {
-        keyboard: {
-          inline_keyboard: [
-            [
-              {
-                text: 'Выбрать маршрут',
-                callback_data: callbackData,
-              },
-            ],
-          ],
-        },
-        message: 'Профиль найден!',
-      };
-    }
-
     return {
       keyboard: {
         inline_keyboard: [
           [
             {
-              text: 'Начать настройку',
+              text: isUserExist ? 'Выбрать маршрут' : 'Начать настройку',
               callback_data: callbackData,
             },
           ],
         ],
       },
-      message: 'Вы здесь впервые? Давайте проведем стартовую настройку!',
+      message: isUserExist
+        ? 'Профиль найден!'
+        : 'Вы здесь впервые? Давайте проведем стартовую настройку!',
     };
   }
 
