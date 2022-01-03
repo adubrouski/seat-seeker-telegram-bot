@@ -1,6 +1,6 @@
 import { BaseRepository } from './base.repository';
 
-export interface ICitiesRepository<T> {
+export interface ICitiesRepository<T> extends BaseRepository<T> {
   isUserExist(item: Partial<T>): Promise<boolean>;
 }
 
