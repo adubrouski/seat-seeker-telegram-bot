@@ -5,8 +5,8 @@ export interface ICitiesRepository<T> extends BaseRepository<T> {
 }
 
 export interface City {
-  id: string;
-  name: string;
+  city_id: string;
+  city_name: string;
 }
 
 export class CitiesRepository
@@ -14,8 +14,8 @@ export class CitiesRepository
   implements ICitiesRepository<City>
 {
   public async isUserExist(item: Partial<City>): Promise<boolean> {
-    const user = this.findOne(item);
-
+    const user = await this.findOne(item);
+    console.log('USER', user);
     return !!user;
   }
 }

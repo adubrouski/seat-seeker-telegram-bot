@@ -27,6 +27,7 @@ export class StartService {
 
   public async getStartItems(userId: number) {
     const isUserExist = await this.userRepository.isUserExist({ id: userId });
+    console.log(isUserExist);
     const callbackData = StartService.createCallbackData({
       action: isUserExist ? 'START_SEARCH' : 'GET_DEPARTURE_CITIES',
     });
@@ -58,24 +59,24 @@ export class StartService {
         if (increasedIndex % 3 === 0 && index !== 0) {
           acc.push([
             {
-              text: array[index].name,
+              text: array[index].city_name,
               callback_data: StartService.createCallbackData({
                 action: 'SET_DEPARTURE_CITY',
-                parameters: { id: array[index].id },
+                parameters: { id: array[index].city_id },
               }),
             },
             {
-              text: array[index - 1].name,
+              text: array[index - 1].city_name,
               callback_data: StartService.createCallbackData({
                 action: 'SET_DEPARTURE_CITY',
-                parameters: { id: array[index - 1].id },
+                parameters: { id: array[index - 1].city_id },
               }),
             },
             {
-              text: array[index - 2].name,
+              text: array[index - 2].city_name,
               callback_data: StartService.createCallbackData({
                 action: 'SET_DEPARTURE_CITY',
-                parameters: { id: array[index - 2].id },
+                parameters: { id: array[index - 2].city_id },
               }),
             },
           ]);
