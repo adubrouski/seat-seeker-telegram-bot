@@ -4,8 +4,8 @@ import {
   createCallbackData,
 } from '../../helpers/query-data.helper';
 import { StartAction } from '../../models/start-controller.model';
-import { UsersRepository } from '../../repositories/users.repository';
-import { CitiesRepository } from '../../repositories/cities.repository';
+import { IUsersRepository, User } from '../../repositories/users.repository';
+import { City, ICitiesRepository } from '../../repositories/cities.repository';
 import { InlineKeyboardButton } from 'node-telegram-bot-api';
 
 interface ReplyItem {
@@ -21,12 +21,13 @@ export class StartService {
   ) => createCallbackData<StartAction>({ ...options, controller: 'start' });
 
   constructor(
-    private userRepository: UsersRepository,
-    private citiesRepository: CitiesRepository,
+    private userRepository: IUsersRepository<User>,
+    private citiesRepository: ICitiesRepository<City>,
   ) {}
 
   public async getStartItems(userId: number) {
     const isUserExist = await this.userRepository.isUserExist({ id: userId });
+    console.log(isUserExist);
     const callbackData = StartService.createCallbackData({
       action: isUserExist ? 'START_SEARCH' : 'GET_DEPARTURE_CITIES',
     });
@@ -58,24 +59,24 @@ export class StartService {
         if (increasedIndex % 3 === 0 && index !== 0) {
           acc.push([
             {
-              text: array[index].name,
+              text: array[index].city_name,
               callback_data: StartService.createCallbackData({
                 action: 'SET_DEPARTURE_CITY',
-                parameters: { id: array[index].id },
+                parameters: { id: array[index].city_id },
               }),
             },
             {
-              text: array[index - 1].name,
+              text: array[index - 1].city_name,
               callback_data: StartService.createCallbackData({
                 action: 'SET_DEPARTURE_CITY',
-                parameters: { id: array[index - 1].id },
+                parameters: { id: array[index - 1].city_id },
               }),
             },
             {
-              text: array[index - 2].name,
+              text: array[index - 2].city_name,
               callback_data: StartService.createCallbackData({
                 action: 'SET_DEPARTURE_CITY',
-                parameters: { id: array[index - 2].id },
+                parameters: { id: array[index - 2].city_id },
               }),
             },
           ]);
