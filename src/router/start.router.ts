@@ -25,16 +25,6 @@ export const useStartRouter = (query: CallbackQuery) => {
         chatId: query.message?.chat.id!,
         messageId: query.message?.message_id!,
       });
-    case 'SET_DEPARTURE_CITY': {
-      const parameters = dataParser.parseParameters<{ id: string }>();
-
-      return startController.setDepartureCity({
-        userId: query.from.id,
-        cityId: parameters.id,
-        messageId: query.message?.message_id!,
-        chatId: query.message?.chat.id!,
-      });
-    }
     case 'SET_ARRIVAL_CITY': {
       const parameters = dataParser.parseParameters<{ id: string }>();
 
