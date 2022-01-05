@@ -1,9 +1,5 @@
 import { DatabaseConnection } from '../../connections/database.connection';
-import {
-  CallbackDataOptions,
-  createCallbackData,
-} from '../../helpers/query-data.helper';
-import { StartAction } from '../../models/start-controller.model';
+import { createCallbackData } from '../../helpers/query-data.helper';
 import { IUsersRepository, User } from '../../repositories/users.repository';
 import { City, ICitiesRepository } from '../../repositories/cities.repository';
 import { InlineKeyboardButton } from 'node-telegram-bot-api';
@@ -16,10 +12,6 @@ interface ReplyItem {
 }
 
 export class StartService {
-  static createCallbackData = (
-    options: Omit<CallbackDataOptions<StartAction>, 'controller'>,
-  ) => createCallbackData<StartAction>({ ...options, controller: 'start' });
-
   constructor(
     private userRepository: IUsersRepository<User>,
     private citiesRepository: ICitiesRepository<City>,
@@ -27,8 +19,9 @@ export class StartService {
 
   public async getStartItems(userId: number) {
     const isUserExist = await this.userRepository.isUserExist({ id: userId });
-    console.log(isUserExist);
-    const callbackData = StartService.createCallbackData({
+
+    const callbackData = createCallbackData({
+      controller: 'start',
       action: isUserExist ? 'START_SEARCH' : 'GET_DEPARTURE_CITIES',
     });
 
@@ -60,21 +53,24 @@ export class StartService {
           acc.push([
             {
               text: array[index].city_name,
-              callback_data: StartService.createCallbackData({
+              callback_data: createCallbackData({
+                controller: 'start',
                 action: 'SET_DEPARTURE_CITY',
                 parameters: { id: array[index].city_id },
               }),
             },
             {
               text: array[index - 1].city_name,
-              callback_data: StartService.createCallbackData({
+              callback_data: createCallbackData({
+                controller: 'start',
                 action: 'SET_DEPARTURE_CITY',
                 parameters: { id: array[index - 1].city_id },
               }),
             },
             {
               text: array[index - 2].city_name,
-              callback_data: StartService.createCallbackData({
+              callback_data: createCallbackData({
+                controller: 'start',
                 action: 'SET_DEPARTURE_CITY',
                 parameters: { id: array[index - 2].city_id },
               }),
@@ -107,21 +103,24 @@ export class StartService {
         acc.push([
           {
             text: array[index].name,
-            callback_data: StartService.createCallbackData({
+            callback_data: createCallbackData({
+              controller: 'settings',
               action: 'SET_ARRIVAL_CITY',
               parameters: { id: array[index].id },
             }),
           },
           {
             text: array[index - 1].name,
-            callback_data: StartService.createCallbackData({
+            callback_data: createCallbackData({
+              controller: 'settings',
               action: 'SET_ARRIVAL_CITY',
               parameters: { id: array[index - 1].id },
             }),
           },
           {
             text: array[index - 2].name,
-            callback_data: StartService.createCallbackData({
+            callback_data: createCallbackData({
+              controller: 'settings',
               action: 'SET_ARRIVAL_CITY',
               parameters: { id: array[index - 2].id },
             }),
@@ -134,7 +133,8 @@ export class StartService {
   }
 
   static getStartKeyboard() {
-    const callbackData = StartService.createCallbackData({
+    const callbackData = createCallbackData({
+      controller: 'start',
       action: 'CHECK_USER_EXISTENCE',
     });
 
