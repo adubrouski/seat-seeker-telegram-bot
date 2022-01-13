@@ -8,6 +8,7 @@ interface CityDTO {
 
 interface ISettingsController {
   setArrivalCity(item: CityDTO): Promise<void>;
+  setDepartureCity(item: CityDTO): Promise<void>;
 }
 
 export class SettingsController
@@ -21,6 +22,14 @@ export class SettingsController
   async setArrivalCity(item: CityDTO): Promise<void> {
     try {
       await this.settingsService.setArrivalCity(item);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async setDepartureCity(item: CityDTO): Promise<void> {
+    try {
+      await this.settingsService.setDepartureCity(item);
     } catch (error) {
       console.log(error);
     }

@@ -6,6 +6,7 @@ import {
 
 interface ISettingsService {
   setArrivalCity(item: SettingsCityDTO): Promise<void>;
+  setDepartureCity(item: SettingsCityDTO): Promise<void>;
 }
 
 export class SettingsService implements ISettingsService {
@@ -13,5 +14,9 @@ export class SettingsService implements ISettingsService {
 
   async setArrivalCity(item: SettingsCityDTO): Promise<void> {
     return this.settingsRepository.setArrivalCity(item);
+  }
+
+  async setDepartureCity(item: SettingsCityDTO): Promise<void> {
+    return this.settingsRepository.setDepartureCity(item);
   }
 }
