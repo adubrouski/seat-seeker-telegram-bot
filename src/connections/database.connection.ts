@@ -31,28 +31,24 @@ export class DatabaseConnection {
       }
 
       if (!isUsersTableExists) {
+        await knex.schema.createTable('users', (table) => {
+          table.integer('id').unsigned().primary();
+          table.string('first_name');
+          table.string('username', 30).notNullable();
+        });
+
         await knex.schema.createTable('settings', (table) => {
           table.increments('settings_id').primary();
           table.string('departure_city', 30);
           table.string('arrival_city', 30);
+          table.integer('user_id').unsigned();
 
           table
             .foreign('departure_city')
             .references('city_id')
             .inTable('cities');
           table.foreign('arrival_city').references('city_id').inTable('cities');
-        });
-
-        await knex.schema.createTable('users', (table) => {
-          table.integer('id').unsigned().primary();
-          table.string('first_name');
-          table.string('username', 30).notNullable();
-          table.integer('settings').unsigned();
-
-          table
-            .foreign('settings')
-            .references('settings_id')
-            .inTable('settings');
+          table.foreign('user_id').references('id').inTable('users');
         });
       }
     } catch (error) {
