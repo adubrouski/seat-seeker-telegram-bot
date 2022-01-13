@@ -19,7 +19,7 @@ export const useSettingsRouters = (query: CallbackQuery) => {
     case 'SET_DEPARTURE_CITY': {
       const parameters = dataParser.parseParameters<{ id: string }>();
 
-      settingsController.setArrivalCity({
+      return settingsController.setArrivalCity({
         userId: query.from.id,
         cityId: parameters.id,
       });

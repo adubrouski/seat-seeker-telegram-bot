@@ -3,7 +3,7 @@ import { SettingsCityDTO } from '../modules/settings/settings.dto';
 
 export interface ISettingsRepository<T> extends BaseRepository<T> {
   setArrivalCity(item: SettingsCityDTO): Promise<void>;
-  setDepartureCity(item: Omit<T, 'arrival_city'>): Promise<void>;
+  setDepartureCity(item: SettingsCityDTO): Promise<void>;
 }
 
 export interface Settings {
@@ -20,7 +20,7 @@ export class SettingsRepository
     return this.qb.insert(item);
   }
 
-  setDepartureCity(item: Omit<Settings, 'arrival_city'>): Promise<void> {
-    return new Promise((resolve) => resolve());
+  async setDepartureCity(item: SettingsCityDTO): Promise<void> {
+    return this.qb.insert(item);
   }
 }
