@@ -20,12 +20,11 @@ export class DatabaseConnection {
     try {
       const isCitiesTableExists = await knex.schema.hasTable('cities');
       const isUsersTableExists = await knex.schema.hasTable('users');
-      const isSettingsTableExists = await knex.schema.hasTable('settings');
 
       if (!isCitiesTableExists) {
         await knex.schema.createTable('cities', (table) => {
-          table.string('id', 7).primary();
-          table.string('name', 30).notNullable();
+          table.string('city_id', 7).primary();
+          table.string('city_name', 30).notNullable();
         });
 
         await knex('cities').insert(appConfig.cities);
@@ -33,21 +32,23 @@ export class DatabaseConnection {
 
       if (!isUsersTableExists) {
         await knex.schema.createTable('users', (table) => {
-          table.integer('id').primary();
-          table.string('name', 30);
+          table.integer('id').unsigned().primary();
+          table.string('first_name');
+          table.string('username', 30).notNullable();
         });
-      }
 
-      if (!isSettingsTableExists) {
         await knex.schema.createTable('settings', (table) => {
-          table.increments('id').primary();
-          table.integer('user_id').notNullable();
-          table.string('city_from', 7).notNullable();
-          table.string('city_to', 7).notNullable();
+          table.increments('settings_id').primary();
+          table.string('departure_city', 30);
+          table.string('arrival_city', 30);
+          table.integer('user_id').unsigned();
 
+          table
+            .foreign('departure_city')
+            .references('city_id')
+            .inTable('cities');
+          table.foreign('arrival_city').references('city_id').inTable('cities');
           table.foreign('user_id').references('id').inTable('users');
-          table.foreign('city_from').references('id').inTable('cities');
-          table.foreign('city_to').references('id').inTable('cities');
         });
       }
     } catch (error) {

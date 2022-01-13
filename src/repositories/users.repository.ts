@@ -7,6 +7,9 @@ export interface IUsersRepository<T> {
 export interface User {
   id: number;
   username: string;
+  first_name?: string;
+  language: string;
+  settings: number;
 }
 
 export class UsersRepository
@@ -14,7 +17,7 @@ export class UsersRepository
   implements IUsersRepository<User>
 {
   public async isUserExist(item: Partial<User>): Promise<boolean> {
-    const user = this.findOne(item);
+    const user = await this.findOne(item);
 
     return !!user;
   }
