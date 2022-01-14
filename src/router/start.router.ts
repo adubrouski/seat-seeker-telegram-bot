@@ -19,7 +19,7 @@ export const useStartRouter = (query: CallbackQuery) => {
 
   switch (action) {
     case 'CHECK_USER_EXISTENCE':
-      return startController.checkUserExistence(editMessageOptions);
+      return startController.tryStartSearch(editMessageOptions);
     case 'GET_DEPARTURE_CITIES':
       return startController.getDepartureCitiesKeyboard({
         chatId: query.message?.chat.id!,
