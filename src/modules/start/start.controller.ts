@@ -41,20 +41,34 @@ export class StartController extends Controller {
     );
   }
 
-  public async start(chatId: number) {
+  public async init(chatId: number) {
     const options = new MessageOptionsBuilder()
-      .setInlineKeyboard(StartService.getStartKeyboard())
+      .setInlineKeyboard(StartService.getInitialKeyboard())
       .build();
 
     await super.sendMessage(chatId, 'Начать', options);
   }
 
-  public async checkUserExistence(options: EditMessageOptions) {
+  public async tryStartSearch(options: EditMessageOptions) {
     try {
       const { userId, userName, chatId, messageId } = options;
-      const { keyboard, message } = await this.startService.getStartItems(
-        userId,
+      const isUserExistence = await this.startService.checkUserExistence(
+        options.userId,
       );
+
+      if (!isUserExistence) {
+        const { keyboard, message } = this.startService.getSettingsKeyboard();
+
+        await super.editMessageText(message, {
+          chat_id: chatId,
+          message_id: messageId,
+          reply_markup: keyboard,
+        });
+
+        return;
+      }
+
+      const { keyboard, message } = this.startService.getSearchKeyboard();
 
       await super.editMessageText(message, {
         chat_id: chatId,

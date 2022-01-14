@@ -14,7 +14,7 @@ export const launch = async () => {
     ).start();
 
     bot.onText(START_REGEXP, ({ chat }) => {
-      return new StartController().start(chat.id);
+      return new StartController().init(chat.id);
     });
     bot.on('callback_query', router);
 

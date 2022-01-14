@@ -17,12 +17,14 @@ export class StartService {
     private citiesRepository: ICitiesRepository<City>,
   ) {}
 
-  public async getStartItems(userId: number) {
-    const isUserExist = await this.userRepository.isUserExist({ id: userId });
+  public async checkUserExistence(userId: number) {
+    return await this.userRepository.isUserExist({ id: userId });
+  }
 
+  public getSettingsKeyboard() {
     const callbackData = createCallbackData({
       controller: 'start',
-      action: isUserExist ? 'START_SEARCH' : 'GET_DEPARTURE_CITIES',
+      action: 'GET_DEPARTURE_CITIES',
     });
 
     return {
@@ -30,15 +32,34 @@ export class StartService {
         inline_keyboard: [
           [
             {
-              text: isUserExist ? 'Выбрать маршрут' : 'Начать настройку',
+              text: 'Начать настройку',
               callback_data: callbackData,
             },
           ],
         ],
       },
-      message: isUserExist
-        ? 'Профиль найден!'
-        : 'Вы здесь впервые? Давайте проведем стартовую настройку!',
+      message: 'Вы здесь впервые? Давайте проведем стартовую настройку!',
+    };
+  }
+
+  public getSearchKeyboard() {
+    const callbackData = createCallbackData({
+      controller: 'start',
+      action: 'START_SEARCH',
+    });
+
+    return {
+      keyboard: {
+        inline_keyboard: [
+          [
+            {
+              text: 'Выбрать маршрут',
+              callback_data: callbackData,
+            },
+          ],
+        ],
+      },
+      message: 'Профиль найден!',
     };
   }
 
@@ -132,7 +153,7 @@ export class StartService {
     }, []);
   }
 
-  static getStartKeyboard() {
+  static getInitialKeyboard() {
     const callbackData = createCallbackData({
       controller: 'start',
       action: 'CHECK_USER_EXISTENCE',
